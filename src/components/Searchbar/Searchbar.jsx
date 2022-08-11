@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
 import css from './Searchbar.module.css';
+import { FiSearch } from 'react-icons/fi';
 
 export const Searchbar = ({ onHandleSubmit, onSearchQuery, value }) => {
   return (
     <header className={css.searchbar} onSubmit={onHandleSubmit}>
       <form className={css.form}>
         <button type="submit" className={css.button}>
-          <span className={css.button_label}>Search</span>
+          <FiSearch size="16px" />
         </button>
         <input
           className={css.input}
