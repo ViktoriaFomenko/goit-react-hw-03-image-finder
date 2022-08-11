@@ -1,7 +1,11 @@
 import { Component } from 'react';
-import { Searchbar } from './Searchbar/Searchbar';
-import { ImageGallery } from './ImageGallery/ImageGallery';
-import APIServise from '../ApiServise/ApiServise';
+import { Searchbar } from '../Searchbar/Searchbar';
+import { ImageGallery } from '../ImageGallery/ImageGallery';
+import { Button } from '../Button/Button';
+import { Loader } from '../Loader/Loader';
+import { Modal } from '../Modal/Modal';
+import css from './App.module.css';
+import APIServise from '../../ApiServise/ApiServise';
 
 export class App extends Component {
   state = {
@@ -13,6 +17,7 @@ export class App extends Component {
     showModal: false,
     error: null,
   };
+
   componentDidUpdate(_, prevState) {
     if (prevState.query !== this.state.query) {
       this.setState({ images: [], page: 1, error: null });
@@ -57,26 +62,48 @@ export class App extends Component {
     event.preventDefault();
     this.ImageSearching();
   };
-  openModal = largeImageURL => {
-    console.log(largeImageURL);
 
+  openModal = largeImageURL => {
     this.setState({
       showModal: true,
       largeImageURL: largeImageURL,
     });
   };
+
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+  };
+
+  LoadMore = () => {
+    this.ImageSearching();
+  };
+
   render() {
-    const { query, images, largeImageURL, isLoading, showModal, error } =
+    const { query, images, isLoading, showModal, error, largeImageURL } =
       this.state;
     return (
-      <>
+      <div className={css.App}>
         <Searchbar
           onHandleSubmit={this.handleSubmit}
           onSearchQuery={this.handleChange}
           value={query}
         />
-        <ImageGallery images={images} OpenModal={this.openModal} />
-      </>
+
+        {images.length > 0 && !error && (
+          <ImageGallery images={images} openModal={this.openModal} />
+        )}
+
+        {!isLoading && images.length >= 12 && !error && (
+          <Button LoadMore={this.LoadMore} />
+        )}
+
+        {isLoading && <Loader />}
+        {showModal && (
+          <Modal onClose={this.toggleModal} largeImageURL={largeImageURL} />
+        )}
+      </div>
     );
   }
 }

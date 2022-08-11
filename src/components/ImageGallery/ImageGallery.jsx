@@ -10,7 +10,7 @@ export const ImageGallery = ({ images, openModal }) => {
           webformatURL={webformatURL}
           largeImageURL={largeImageURL}
           tags={tags}
-          openModal={() => openModal(largeImageURL)}
+          openModal={() => openModal({ largeImageURL, tags })}
         />
       ))}
     </ul>

@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types';
-// import css from './Searchbar.module.css'
+import css from './Searchbar.module.css';
 
 export const Searchbar = ({ onHandleSubmit, onSearchQuery, value }) => {
   return (
-    <header className="searchbar" onSubmit={onHandleSubmit}>
-      <form className="form">
-        <button type="submit" className="button">
-          <span className="button-label">Search</span>
+    <header className={css.searchbar} onSubmit={onHandleSubmit}>
+      <form className={css.form}>
+        <button type="submit" className={css.button}>
+          <span className={css.button_label}>Search</span>
         </button>
         <input
-          className="input"
+          className={css.input}
           type="text"
           value={value}
           autoComplete="off"
