@@ -5,6 +5,8 @@ import { Button } from '../Button/Button';
 import { Loader } from '../Loader/Loader';
 import { Modal } from '../Modal/Modal';
 import css from './App.module.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import APIServise from '../../ApiServise/ApiServise';
 
 export class App extends Component {
@@ -28,7 +30,7 @@ export class App extends Component {
     const { query, page } = this.state;
 
     if (query.trim() === '') {
-      return alert('Please enter something!');
+      return toast.warning('Please enter something!');
     }
     this.Loader();
 
@@ -39,10 +41,10 @@ export class App extends Component {
         page: page + 1,
       }));
       if (response.length === 0) {
-        this.setState({ error: alert(`No results for ${query}!`) });
+        this.setState({ error: toast.info(`No results for ${query}!`) });
       }
     } catch (error) {
-      this.setState({ error: alert('Something went wrong...') });
+      this.setState({ error: toast.error('Something went wrong...') });
     } finally {
       this.Loader();
     }
@@ -85,6 +87,7 @@ export class App extends Component {
       this.state;
     return (
       <div className={css.App}>
+        <ToastContainer autoClose={2000} position="top-center" closeOnClick />
         <Searchbar
           onHandleSubmit={this.handleSubmit}
           onSearchQuery={this.handleChange}
