@@ -40,13 +40,13 @@ export class App extends Component {
         images: [...images, ...response],
         page: page + 1,
       }));
-      if (response.length === 0) {
+      if (response.total === 0) {
         this.setState({ error: toast.info(`No results for ${query}!`) });
       }
     } catch (error) {
       this.setState({ error: toast.error('Something went wrong...') });
     } finally {
-      this.Loader();
+      this.setState({ isLoading: false });
     }
   };
 
