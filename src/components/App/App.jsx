@@ -15,54 +15,45 @@ export class App extends Component {
     query: '',
     page: 1,
     largeImageURL: '',
+    totalLength: 0,
     isLoading: false,
     showModal: false,
     error: null,
   };
 
-  componentDidUpdate(_, prevState) {
-    if (prevState.query !== this.state.query) {
-      this.setState({ images: [], page: 1, error: null });
+  async componentDidUpdate(_, prevState) {
+    const { query, page } = this.state;
+    if (prevState.query !== query || prevState.page !== page) {
+      this.setState({ isLoading: true });
+
+      try {
+        const response = await APIServise(query, page);
+        const addImages = response.hits;
+        this.setState(({ images, page }) => ({
+          images: [...images, ...addImages],
+          totalLength: response.totalHits,
+        }));
+        if (response.total === 0) {
+          this.setState({ error: toast.info(`No results for ${query}!`) });
+        }
+      } catch (error) {
+        this.setState({ error: toast.error('Something went wrong...') });
+      } finally {
+        this.setState({ isLoading: false });
+      }
     }
   }
 
-  ImageSearching = async () => {
-    const { query, page } = this.state;
-
-    if (query.trim() === '') {
+  handleSubmit = value => {
+    if (value.trim() === '') {
       return toast.warning('Please enter something!');
     }
-    this.Loader();
 
-    try {
-      const response = await APIServise(query, page);
-      this.setState(({ images, page }) => ({
-        images: [...images, ...response],
-        page: page + 1,
-      }));
-      if (response.total === 0) {
-        this.setState({ error: toast.info(`No results for ${query}!`) });
-      }
-    } catch (error) {
-      this.setState({ error: toast.error('Something went wrong...') });
-    } finally {
-      this.setState({ isLoading: false });
-    }
-  };
-
-  Loader = () => {
-    this.setState(({ isLoading }) => ({
-      isLoading: !isLoading,
-    }));
-  };
-
-  handleChange = event => {
-    this.setState({ query: event.target.value });
-  };
-
-  handleSubmit = event => {
-    event.preventDefault();
-    this.ImageSearching();
+    this.setState({
+      images: [],
+      query: value,
+      page: 1,
+    });
   };
 
   openModal = largeImageURL => {
@@ -79,26 +70,22 @@ export class App extends Component {
   };
 
   LoadMore = () => {
-    this.ImageSearching();
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   render() {
-    const { query, images, isLoading, showModal, error, largeImageURL } =
+    const { images, isLoading, showModal, error, largeImageURL, totalLength } =
       this.state;
     return (
       <div className={css.App}>
         <ToastContainer autoClose={2000} position="top-center" closeOnClick />
-        <Searchbar
-          onHandleSubmit={this.handleSubmit}
-          onSearchQuery={this.handleChange}
-          value={query}
-        />
+        <Searchbar onSubmit={this.handleSubmit} />
 
         {images.length > 0 && !error && (
           <ImageGallery images={images} openModal={this.openModal} />
         )}
 
-        {!isLoading && images.length >= 12 && !error && (
+        {!isLoading && images.length !== totalLength && !error && (
           <Button onClick={this.LoadMore} />
         )}
 
