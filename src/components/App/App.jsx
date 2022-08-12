@@ -99,7 +99,7 @@ export class App extends Component {
         )}
 
         {!isLoading && images.length >= 12 && !error && (
-          <Button LoadMore={this.LoadMore} />
+          <Button onClick={this.LoadMore} />
         )}
 
         {isLoading && <Loader />}

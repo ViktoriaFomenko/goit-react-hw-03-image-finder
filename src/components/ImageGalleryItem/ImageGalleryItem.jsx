@@ -13,7 +13,9 @@ export const ImageGalleryItem = ({ webformatURL, tags, openModal }) => {
     </li>
   );
 };
+
 ImageGalleryItem.propTypes = {
   webformatURL: PropTypes.string.isRequired,
   tags: PropTypes.string.isRequired,
+  openModal: PropTypes.func.isRequired,
 };
